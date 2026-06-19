@@ -38,8 +38,12 @@ const Navbar = () => {
 
           {/* Navigation Links (Desktop) */}
           <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            <Link to="/" className={`transition ${isActive('/')}`}>Home</Link>
-            <Link to="/turfs" className={`transition ${isActive('/turfs')}`}>Browse Turfs</Link>
+            {(!isAuthenticated || user.role !== 'owner') && (
+              <>
+                <Link to="/" className={`transition ${isActive('/')}`}>Home</Link>
+                <Link to="/turfs" className={`transition ${isActive('/turfs')}`}>Browse Turfs</Link>
+              </>
+            )}
 
             {isAuthenticated && (
               <>
@@ -130,8 +134,12 @@ const Navbar = () => {
       {/* Mobile Drawer menu */}
       {isOpen && (
         <div className="md:hidden bg-slatebg-dark/95 border-b border-slate-800/80 animate-in slide-in-from-top duration-200 px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
-          <Link to="/" onClick={() => setIsOpen(false)} className="block py-2 text-slate-300 hover:text-white">Home</Link>
-          <Link to="/turfs" onClick={() => setIsOpen(false)} className="block py-2 text-slate-300 hover:text-white">Browse Turfs</Link>
+          {(!isAuthenticated || user.role !== 'owner') && (
+            <>
+              <Link to="/" onClick={() => setIsOpen(false)} className="block py-2 text-slate-300 hover:text-white">Home</Link>
+              <Link to="/turfs" onClick={() => setIsOpen(false)} className="block py-2 text-slate-300 hover:text-white">Browse Turfs</Link>
+            </>
+          )}
 
           {isAuthenticated ? (
             <>

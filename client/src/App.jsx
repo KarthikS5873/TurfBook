@@ -9,6 +9,8 @@ import { BookingProvider } from './context/BookingContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import ApprovalPending from './components/ApprovalPending';
+import useAuth from './hooks/useAuth';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -37,146 +39,153 @@ import ManageTurfs from './pages/admin/ManageTurfs';
 import ManageUsers from './pages/admin/ManageUsers';
 import Analytics from './pages/admin/Analytics';
 
+function AppContent() {
+  const { user, isAuthenticated } = useAuth();
+
+  if (isAuthenticated && user.role === 'owner' && !user.isApproved) {
+    return <ApprovalPending />;
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/turfs" element={<TurfList />} />
+          <Route path="/turfs/:id" element={<TurfDetail />} />
+
+          {/* Auth Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          {/* Protected Customer Routes */}
+          <Route 
+            path="/booking/confirm" 
+            element={
+              <ProtectedRoute allowedRoles={['customer']}>
+                <BookingPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/bookings" 
+            element={
+              <ProtectedRoute allowedRoles={['customer', 'owner', 'admin']}>
+                <BookingHistory />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute allowedRoles={['customer', 'owner', 'admin']}>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Protected Owner Routes */}
+          <Route 
+            path="/owner" 
+            element={
+              <ProtectedRoute allowedRoles={['owner']}>
+                <OwnerDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/owner/turf" 
+            element={
+              <ProtectedRoute allowedRoles={['owner']}>
+                <ManageTurf />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/owner/slots" 
+            element={
+              <ProtectedRoute allowedRoles={['owner']}>
+                <SlotManager />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/owner/requests" 
+            element={
+              <ProtectedRoute allowedRoles={['owner']}>
+                <BookingRequests />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/owner/revenue" 
+            element={
+              <ProtectedRoute allowedRoles={['owner']}>
+                <Revenue />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Protected Admin Routes */}
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/owners" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <ManageOwners />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/turfs" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <ManageTurfs />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/users" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <ManageUsers />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/analytics" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <Analytics />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Fallback route */}
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <BookingProvider>
         <Router>
-          <div className="flex flex-col min-h-screen">
-            {/* Header Navigation */}
-            <Navbar />
-
-            {/* Central Page Contents */}
-            <main className="flex-grow">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/turfs" element={<TurfList />} />
-                <Route path="/turfs/:id" element={<TurfDetail />} />
-
-                {/* Auth Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-
-                {/* Protected Customer Routes */}
-                <Route 
-                  path="/booking/confirm" 
-                  element={
-                    <ProtectedRoute allowedRoles={['customer']}>
-                      <BookingPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/bookings" 
-                  element={
-                    <ProtectedRoute allowedRoles={['customer', 'owner', 'admin']}>
-                      <BookingHistory />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute allowedRoles={['customer', 'owner', 'admin']}>
-                      <Profile />
-                    </ProtectedRoute>
-                  } 
-                />
-
-                {/* Protected Owner Routes */}
-                <Route 
-                  path="/owner" 
-                  element={
-                    <ProtectedRoute allowedRoles={['owner']}>
-                      <OwnerDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/owner/turf" 
-                  element={
-                    <ProtectedRoute allowedRoles={['owner']}>
-                      <ManageTurf />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/owner/slots" 
-                  element={
-                    <ProtectedRoute allowedRoles={['owner']}>
-                      <SlotManager />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/owner/requests" 
-                  element={
-                    <ProtectedRoute allowedRoles={['owner']}>
-                      <BookingRequests />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/owner/revenue" 
-                  element={
-                    <ProtectedRoute allowedRoles={['owner']}>
-                      <Revenue />
-                    </ProtectedRoute>
-                  } 
-                />
-
-                {/* Protected Admin Routes */}
-                <Route 
-                  path="/admin" 
-                  element={
-                    <ProtectedRoute allowedRoles={['admin']}>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/owners" 
-                  element={
-                    <ProtectedRoute allowedRoles={['admin']}>
-                      <ManageOwners />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/turfs" 
-                  element={
-                    <ProtectedRoute allowedRoles={['admin']}>
-                      <ManageTurfs />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/users" 
-                  element={
-                    <ProtectedRoute allowedRoles={['admin']}>
-                      <ManageUsers />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/analytics" 
-                  element={
-                    <ProtectedRoute allowedRoles={['admin']}>
-                      <Analytics />
-                    </ProtectedRoute>
-                  } 
-                />
-
-                {/* Fallback route */}
-                <Route path="*" element={<Home />} />
-              </Routes>
-            </main>
-
-            {/* Footer */}
-            <Footer />
-          </div>
+          <AppContent />
         </Router>
       </BookingProvider>
     </AuthProvider>
