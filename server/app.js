@@ -12,7 +12,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://turfbooktn.netlify.app'
+    ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : [])
   ],
   credentials: true
 }));
