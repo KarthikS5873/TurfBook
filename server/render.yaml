@@ -3,7 +3,7 @@ services:
     name: turfbook-tn-server
     runtime: node
     region: oregon
-    buildCommand: npm install
+    buildCommand: npm install --legacy-peer-deps
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
