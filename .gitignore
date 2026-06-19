@@ -5,7 +5,7 @@
 !.env.example
 
 # Dependencies
-node_modules/
+server/node_modules
 
 # Build Outputs
 client/dist/
