@@ -15,4 +15,4 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: CLIENT_URL
-        value: https://turfbooktn.netlify.app
+        value: https://turfbook-tn.vercel.app
