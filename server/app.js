@@ -8,12 +8,16 @@ const errorHandler = require('./middleware/error.middleware');
 const app = express();
 
 // Standard middlewares
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',').map(s => s.trim()) : []),
+  'https://turfbook-tn.vercel.app',
+  'https://turf-book-five.vercel.app'
+].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : [])
-  ],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
